@@ -1,0 +1,44 @@
+---
+title: "Naive Bayes"
+author: "Deboleena"
+date: "March 7, 2019"
+output: pdf_document
+---
+The Titanic dataset in R is a table for about 2200 passengers summarised according to four factors - economic status ranging from 1st class, 2nd class, 3rd class and crew; gender which is either male or female; Age category which is either Child or Adult and whether the type of passenger survived. For each combination of Age, Gender, Class and Survived status, the table gives the number of passengers who fall into the combination. We will use the Naive Bayes Technique to classify such passengers and check how well it performs.
+```{r}
+#Getting started with Naive Bayes
+#Install the package
+#install.packages("e1071")
+#Loading the library
+library(e1071)
+library(mlr)
+#Laod the Titanic Data set
+data("Titanic")
+
+#Save data into data frame and view it
+Titanic = as.data.frame(Titanic)
+```
+```{r}
+#Changing the summarized table into rows based on frequency table
+repeating = rep.int(seq_len(nrow(Titanic)), Titanic$Freq)
+#Create the dataset by row repetition created 
+Titanic_dataset = Titanic[repeating,]
+#Dropping Frequency 
+Titanic_dataset$Freq = NULL
+```
+```{r}
+##Fitting the Naive Bayes model
+Naive_bayes_model = naiveBayes(Survived ~., data = Titanic_dataset)
+#the model summary
+Naive_bayes_model
+```
+
+```{r}
+#Prediction on the dataset
+NB_Predictions=predict(Naive_bayes_model,Titanic_dataset)
+#Confusion matrix to check accuracy
+table(NB_Predictions,Titanic_dataset$Survived)
+```
+We are able to classify 1364 out of 1490 "No" cases correctly and 349 out of 711 "Yes" cases correctly. This means the ability of Naive Bayes algorithm to predict "No" cases is about 91.5% but it falls down to only 49% of the "Yes" cases resulting in an overall accuracy of 77.8%
+
+
